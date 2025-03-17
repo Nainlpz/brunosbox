@@ -3,9 +3,12 @@ package edu.estatuas.brunosbox;
 public class ScoreCard {
 
     private final String color;
-    private String redCorner = "";
-    private String blueCorner = "";
+    private String redCorner;
+    private String blueCorner;
     private byte rounds = 0;
+    private String[] judgeScoreCard = new String[0];
+    private byte redBoxerFinalScore = 0;
+    private byte blueBoxerFinalScore = 0;
 
     public ScoreCard(String color) {
         this.color = color;
@@ -36,7 +39,30 @@ public class ScoreCard {
     }
 
     public byte getRounds() {
+        setRounds((byte) judgeScoreCard.length);
         return this.rounds;
+    }
+
+    public void loadJudgeScoreCard(String[] judgeScoreCard) {
+        this.judgeScoreCard = judgeScoreCard;
+    }
+
+    public byte getRedBoxerFinalScore() {
+
+        for (String score : judgeScoreCard) {
+            RegularRound round = new RegularRound(score);
+            redBoxerFinalScore += round.getRedBoxerScore();
+        }
+        return redBoxerFinalScore;
+    }
+
+    public byte getBlueBoxerFinalScore() {
+
+        for (String score : judgeScoreCard) {
+            RegularRound round = new RegularRound(score);
+            blueBoxerFinalScore += round.getBlueBoxerScore();
+        }
+        return blueBoxerFinalScore;
     }
 
     @Override
@@ -46,6 +72,21 @@ public class ScoreCard {
                 + "\t" + getRCorner()
                 + "\n\t\t\t" + getRounds() + " rounds\n"
                 + "Round\t" + "Score\t" + "Round\t" + "Score\t" + "Round\t\n"
-                + "Score\t" + "Total\t" + "\t\t" + "Total\t" + "Score\t";
+                + "Score\t" + "Total\t" + "\t\t" + "Total\t" + "Score\t\n"
+                + viewRounds() + "\n"
+                + "FINAL SCORE " + getBlueBoxerFinalScore() + " - " + getRedBoxerFinalScore() + " FINAL SCORE";
     }
-}
+
+    public String viewRounds() {
+        StringBuilder scoreRounds = new StringBuilder();
+        setRounds((byte) 0);
+        for (String score : judgeScoreCard) {
+        RegularRound round = new RegularRound(score);
+        rounds++;
+            scoreRounds.append(round.getRedBoxerScore()).append("\t".repeat(4))
+                    .append(rounds).append("\t".repeat(4))
+                    .append(round.getBlueBoxerScore()).append("\n");
+        }
+
+        return scoreRounds.toString();
+}}
